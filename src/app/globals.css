@@ -1,26 +1,358 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Design tokens — measured from majd-portfolio.framer.website
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #faf7f3;
+  --ink: #111111;
+  --ink-50: rgba(17, 17, 17, 0.5);
+  --ink-10: rgba(0, 0, 0, 0.1);
+  --cream: #faf7f3;
+  --cream-10: rgba(250, 247, 243, 0.1);
+
+  /* content column: 1180px + 20px gutters */
+  --container: 1180px;
+  --gutter: 20px;
+
+  /* Framer's default appear/hover curve */
+  --ease: cubic-bezier(0.44, 0, 0.56, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@theme {
+  --color-bg: #faf7f3;
+  --color-ink: #111111;
+  --color-cream: #faf7f3;
+  --font-sans: var(--font-archivo), "Archivo", Helvetica, Arial, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ============================================================
+   Base
+   ============================================================ */
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* positions .grain against the full document, not the viewport */
+  position: relative;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-archivo), "Archivo", Helvetica, Arial, sans-serif;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: rgba(17, 17, 17, 0.1);
+  color: var(--ink);
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(17, 17, 17, 0.15); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(17, 17, 17, 0.3); }
+
+/* Paper-grain overlay covering the full document, as on the original */
+.grain {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("/grain.png");
+  background-repeat: repeat;
+  background-size: 161px;
+}
+
+/* ============================================================
+   Layout
+   ============================================================ */
+
+.container {
+  width: 100%;
+  max-width: calc(var(--container) + var(--gutter) * 2);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* main stacks its sections with a 10px seam, matching the original */
+.sections {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.section-pt { padding-top: 120px; }
+
+/* heading → content rhythm inside every section */
+.stack-60 { display: flex; flex-direction: column; gap: 60px; }
+
+/* ============================================================
+   Type scale — Archivo throughout. Tracking is -0.04em at 22px
+   and below, -0.02em above, and normal on the 26px column heads.
+   ============================================================ */
+
+.t-hero {
+  font-size: clamp(52px, 12.08vw, 174px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 0.9em;
+}
+
+.t-h2 {
+  font-size: clamp(44px, 5.28vw, 76px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1em;
+}
+
+.t-h3 {
+  font-size: clamp(40px, 4.72vw, 68px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1em;
+}
+
+.t-display {
+  font-size: clamp(30px, 3.05vw, 44px);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.2em;
+}
+
+.t-quote {
+  font-size: clamp(24px, 2.5vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2em;
+}
+
+.t-card {
+  font-size: clamp(26px, 2.22vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2em;
+}
+
+.t-column {
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1.2em;
+}
+
+.t-lead {
+  font-size: clamp(18px, 1.53vw, 22px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.4em;
+}
+
+.t-body {
+  font-size: 18px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.4em;
+}
+
+.t-small {
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.4em;
+}
+
+.t-role {
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1.4em;
+}
+
+.t-btn {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.2em;
+}
+
+/* ============================================================
+   Rolling text — letters lift out and the copy underneath rises
+   in, staggered left to right. Used on every button and pill.
+   ============================================================ */
+
+.rolling {
+  display: inline-flex;
+  overflow: hidden;
+  position: relative;
+  vertical-align: bottom;
+}
+
+.rolling span[data-ch] {
+  display: inline-block;
+  white-space: pre;
+  transition: transform 0.4s var(--ease);
+  transition-delay: calc(var(--i) * 18ms);
+}
+
+.rolling .rolling-b {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.rolling .rolling-b span[data-ch] { transform: translateY(100%); }
+
+.roll-host:hover .rolling .rolling-a span[data-ch],
+.roll-host:focus-visible .rolling .rolling-a span[data-ch] {
+  transform: translateY(-100%);
+}
+
+.roll-host:hover .rolling .rolling-b span[data-ch],
+.roll-host:focus-visible .rolling .rolling-b span[data-ch] {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   Arrow button — 28px square, hairline border, a dark circle
+   that wipes out from the centre while the arrow slides
+   diagonally out of frame and a second one slides in.
+   ============================================================ */
+
+.arrow-btn {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--arrow-line, #111);
+  overflow: hidden;
+  flex: none;
+}
+
+.arrow-btn .arrow-bg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 999px;
+  background: var(--arrow-line, #111);
+  transform: scale(0);
+  transition: transform 0.45s var(--ease);
+}
+
+.arrow-btn svg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  stroke: var(--arrow-line, #111);
+  stroke-width: 2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.45s var(--ease), stroke 0.45s var(--ease);
+}
+
+.arrow-btn .a1 { transform: translate(-50%, -50%); }
+.arrow-btn .a2 { transform: translate(-160%, 60%); }
+
+.roll-host:hover .arrow-btn .arrow-bg,
+.roll-host:focus-visible .arrow-btn .arrow-bg { transform: scale(1); }
+
+.roll-host:hover .arrow-btn .a1,
+.roll-host:focus-visible .arrow-btn .a1 { transform: translate(60%, -160%); }
+
+.roll-host:hover .arrow-btn .a2,
+.roll-host:focus-visible .arrow-btn .a2 { transform: translate(-50%, -50%); }
+
+.roll-host:hover .arrow-btn svg,
+.roll-host:focus-visible .arrow-btn svg { stroke: var(--arrow-fill, #faf7f3); }
+
+/* ============================================================
+   Cards
+   ============================================================ */
+
+.zoom-img {
+  transition: transform 0.7s var(--ease);
+  will-change: transform;
+}
+
+.zoom-host:hover .zoom-img { transform: scale(1.04); }
+
+/* Testimonial flip */
+.flip {
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: var(--ink);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: transform 0.7s var(--ease);
+  will-change: transform;
+}
+
+.flip-front { transform: perspective(1200px) rotateY(0deg); }
+.flip-back  { transform: perspective(1200px) rotateY(180deg); }
+
+/* Hover for pointers, focus for keyboards and taps — the back face has to
+   be reachable without a mouse. */
+.flip:hover .flip-front,
+.flip:focus .flip-front,
+.flip:focus-within .flip-front { transform: perspective(1200px) rotateY(-180deg); }
+
+.flip:hover .flip-back,
+.flip:focus .flip-back,
+.flip:focus-within .flip-back { transform: perspective(1200px) rotateY(0deg); }
+
+.flip:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+.flip:focus:not(:focus-visible) { outline: none; }
+
+/* ============================================================
+   Lenis
+   ============================================================ */
+
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+.lenis.lenis-scrolling iframe { pointer-events: none; }
+
+/* ============================================================
+   Reduced motion
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ============================================================
+   Focus
+   ============================================================ */
+
+:where(a, button, input, textarea, [tabindex]):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+  border-radius: 4px;
 }
