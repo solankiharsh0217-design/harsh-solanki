@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Harsh Solanki — Portfolio
 
-## Getting Started
+Personal portfolio of Harsh Solanki, a full-stack engineer building production
+web applications and AI agent systems. Built with Next.js 16, React 19,
+TypeScript, Tailwind CSS v4, Framer Motion, and Lenis smooth scrolling.
 
-First, run the development server:
+> **Live:** replace with your deployment URL after going live (e.g.
+> `https://harsh-solanki-portfolio.vercel.app`)
+
+## Features
+
+- **Animated hero + bio** — sticky portrait card with scroll-driven
+  grayscale-to-color flip, holographic decorations, staggered reveals
+- **Scroll-scrubbed manifesto** — word-by-word text reveal pinned on scroll
+- **Services & featured work** — service list with tags, project cards with
+  hover zoom linking out to live deployments
+- **Full work archive** at `/work` — all 32 projects with screenshots
+- **Working contact form** — posts to `/api/contact`, which forwards to a
+  configurable webhook (or logs server-side when unset)
+
+## Tech stack
+
+| Layer     | Choice                                            |
+| --------- | ------------------------------------------------- |
+| Framework | Next.js 16 (App Router, Turbopack) + React 19     |
+| Language  | TypeScript (strict)                               |
+| Styling   | Tailwind CSS v4, custom design tokens in CSS      |
+| Motion    | Framer Motion (reveals, springs, scroll progress) |
+| Scroll    | Lenis (`lenis/react`)                             |
+| Fonts     | Archivo via `next/font/google`                    |
+| Tooling   | ESLint (flat config), Playwright (local scripts)  |
+
+## Getting started
+
+Requires **Node.js 20.9+** (Vercel builds on Node 22).
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+| Script        | What it does                              |
+| ------------- | ----------------------------------------- |
+| `npm run dev` | Start the dev server (Turbopack)          |
+| `npm run build` | Production build (`next build`)         |
+| `npm run start` | Serve the production build              |
+| `npm run lint` | Lint the app (`tools/` scripts excluded) |
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable              | Required | Purpose                                                              |
+| --------------------- | -------- | -------------------------------------------------------------------- |
+| `CONTACT_WEBHOOK_URL` | No       | Endpoint the contact form forwards to (Formspree, Resend, Slack …). Without it, submissions are only logged server-side. |
 
-## Learn More
+Copy `.env.example` to `.env.local` for local development. On Vercel, set
+variables in **Project Settings → Environment Variables** instead — never
+commit real values.
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/
+│   ├── page.tsx              # Home: HeroBio, Quote, Services, Projects, Contact
+│   ├── work/page.tsx         # Full project archive (+ metadata)
+│   ├── layout.tsx            # Fonts, metadata, nav, smooth scroll
+│   └── api/contact/route.ts  # Contact form endpoint (validates + forwards)
+├── components/               # HeroBio, Navigation, Services, Projects, ...
+└── lib/projects.ts           # Project data (edit FEATURED_IDS to reorder home picks)
+public/
+├── projects/                 # 582×401 screenshots of each live deployment
+├── portrait.jpg              # Hero portrait (grayscale → color on scroll)
+└── grain.png / shape-*.png   # Texture + holographic decorations
+tools/scraping/               # Local-only Playwright scripts (not deployed)
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Regenerating project screenshots
 
-## Deploy on Vercel
+The `tools/scraping` scripts are local dev utilities (Playwright lives in
+`devDependencies` for this reason). To re-capture all cards at their native
+ratio:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+node tools/scraping/capture-projects.js
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+The repo is prepped for Vercel (framework auto-detected, no `vercel.json`
+needed):
+
+1. Push to GitHub
+2. Vercel → **Add New → Project** → import the repo, accept the defaults
+3. Add `CONTACT_WEBHOOK_URL` under Environment Variables if you want the
+   contact form to deliver
+4. Deploy — every push to the connected branch redeploys automatically
