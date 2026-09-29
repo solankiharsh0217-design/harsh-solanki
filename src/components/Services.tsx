@@ -21,7 +21,7 @@ export default function Services() {
           {SERVICES.map((s) => (
             <StaggerItem key={s.title}>
               <div
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6 py-6 sm:py-0 sm:h-[120px]"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-6 px-6 sm:px-10 py-6 sm:py-0 sm:h-[120px]"
                 style={{
                   backgroundColor: "#faf7f3",
                   borderBottom: "1px solid rgba(0, 0, 0, 0.1)",
