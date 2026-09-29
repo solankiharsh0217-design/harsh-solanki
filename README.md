@@ -48,9 +48,15 @@ npm run dev      # http://localhost:3000
 
 ## Environment variables
 
-| Variable              | Required | Purpose                                                              |
-| --------------------- | -------- | -------------------------------------------------------------------- |
-| `CONTACT_WEBHOOK_URL` | No       | Endpoint the contact form forwards to (Formspree, Resend, Slack …). Without it, submissions are only logged server-side. |
+| Variable              | Required | Purpose                                                                                                          |
+| --------------------- | -------- | ---------------------------------------------------------------------------------------------------------------- |
+| `GMAIL_USER`          | No*      | Gmail address the contact form sends from (must match the app-password account).                                 |
+| `GMAIL_APP_PASSWORD`  | No*      | Google app password — enable 2-Step Verification, then generate one at `myaccount.google.com/apppasswords`.      |
+| `CONTACT_TO_EMAIL`    | No       | Where inquiries land. Defaults to `GMAIL_USER`.                                                                  |
+| `CONTACT_WEBHOOK_URL` | No       | Fallback used only when Gmail vars are unset: forwards the form JSON to Formspree, Resend, Slack, …              |
+
+\* Set the Gmail pair (or the webhook) or submissions are only logged
+server-side. Gmail allows ~500 sends/day — plenty for a contact form.
 
 Copy `.env.example` to `.env.local` for local development. On Vercel, set
 variables in **Project Settings → Environment Variables** instead — never
